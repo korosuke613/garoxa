@@ -1,0 +1,61 @@
+service:
+  name: garoxa
+# app and org for use with dashboard.serverless.com
+#app: your-app-name
+#org: your-org-name
+
+frameworkVersion: '2'
+
+plugins:
+  - serverless-webpack
+  - serverless-alexa-skills
+  - serverless-dotenv-plugin
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: 'ap-northeast-1'
+
+custom:
+  alexa:
+    # Step 1: Run `sls alexa auth` to authenticate
+    # Step 2: Run `sls alexa create --name "Serverless Alexa Typescript" --locale en-GB --type custom` to create a new skill
+    skills:
+      # Step 3: Paste the skill id returned by the create command here:
+      - id: ${env:SKILL_ID}
+        manifest:
+          publishingInformation:
+            locales:
+              ja-JP:
+                name: はじめてのサーバーレス
+          apis:
+            custom:
+              endpoint:
+                # Step 4: Do your first deploy of your Serverless stack
+                # Step 5: Paste the ARN of your lambda here:
+                uri: ${env:LAMBDA_ARN}
+                # Step 6: Run `sls alexa update` to deploy the skill manifest
+                # Step 7: Run `sls alexa build` to build the skill interaction model
+                # Step 8: Enable the skill in the Alexa app to start testing.
+          manifestVersion: '1.0'
+        models:
+          ja-JP:
+            interactionModel:
+              languageModel:
+                invocationName: はじめてのサーバーレス
+                intents:
+                  - name: AMAZON.StopIntent
+                  - name: HelloIntent
+                    slots:
+                      - name: First
+                        type: AMAZON.Food
+                      - name: Second
+                        type: AMAZON.Food
+                    samples:
+                      - 'こんにちは {First} {Second}'
+
+functions:
+  alexa:
+    handler: handler.alexa
+    events:
+      - alexaSkill: ${self:custom.alexa.skills.0.id}
