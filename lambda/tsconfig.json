@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+      "module": "commonjs",
+      "target": "es6",
+      "noImplicitAny": true,
+      "noImplicitReturns": true,
+      "noFallthroughCasesInSwitch": true,
+      "outDir": "./built",
+      "allowJs": true
+    },
+    "include": [
+        "./src/**/*"
+    ]
+  }
