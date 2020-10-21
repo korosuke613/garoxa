@@ -1,0 +1,37 @@
+{
+  "manifest": {
+    "publishingInformation": {
+      "locales": {
+        "en-US": {
+          "summary": "Sample Short Description",
+          "examplePhrases": [
+            "Alexa open hello world"
+          ],
+          "name": "garoxa",
+          "description": "Sample Full Description"
+        },
+        "ja-JP": {
+          "summary": "Garoxaだよ",
+          "examplePhrases": [
+            "アレクサ、ガロクサを開いて",
+            "アレクサ、ガルクサを開いて"
+          ],
+          "name": "ガルクサ",
+          "description": "Garoonに予定を登録するぜ！"
+        }
+      },
+      "isAvailableWorldwide": true,
+      "testingInstructions": "Sample Testing Instructions.",
+      "category": "KNOWLEDGE_AND_TRIVIA",
+      "distributionCountries": []
+    },
+    "apis": {
+      "custom": {
+        "endpoint": {
+          "uri": "arn:aws:lambda:ap-northeast-1:568211859639:function:ask-garoxa-default-default-1603248432483"
+        }
+      }
+    },
+    "manifestVersion": "1.0"
+  }
+}

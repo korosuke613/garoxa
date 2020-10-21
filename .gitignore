@@ -8,6 +8,10 @@ jspm_packages
 # Webpack directories
 .webpack
 
-.idea
+.idea/
 .envrc
 .env
+
+.ask/
+build/
+out/

@@ -1,0 +1,158 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "ガルーン予定管理",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "HelloWorldIntent",
+                    "slots": [],
+                    "samples": [
+                        "こんにちは",
+                        "あなたは誰",
+                        "ハローワールドって言って",
+                        "ハローって言って",
+                        "こんにちは"
+                    ]
+                },
+                {
+                    "name": "RegisterScheduleIntent",
+                    "slots": [
+                        {
+                            "name": "Name",
+                            "type": "AMAZON.City",
+                            "samples": [
+                                "{Name}",
+                                "{Name} です"
+                            ]
+                        },
+                        {
+                            "name": "Location",
+                            "type": "AMAZON.City",
+                            "samples": [
+                                "{Location}",
+                                "{Location} です"
+                            ]
+                        },
+                        {
+                            "name": "CheckInDate",
+                            "type": "AMAZON.DATE",
+                            "samples": [
+                                "{CheckInDate}",
+                                "{CheckInDate} です"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "{Location}",
+                        "{Location} です",
+                        "{CheckInDate}",
+                        "{CheckInDate} です",
+                        "{Name}",
+                        "{Name} です",
+                        "{CheckInDate} に {Location} で",
+                        "{CheckInDate} に {Location} で {Name}",
+                        "予定を登録",
+                        "予定をいれる"
+                    ]
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                }
+            ],
+            "types": []
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "RegisterScheduleIntent",
+                    "delegationStrategy": "ALWAYS",
+                    "confirmationRequired": true,
+                    "prompts": {
+                        "confirmation": "Confirm.Intent.RegisterSchedule"
+                    },
+                    "slots": [
+                        {
+                            "name": "Name",
+                            "type": "AMAZON.City",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.RegisterSchedule.Name"
+                            }
+                        },
+                        {
+                            "name": "Location",
+                            "type": "AMAZON.City",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.RegisterSchedule.Location"
+                            }
+                        },
+                        {
+                            "name": "CheckInDate",
+                            "type": "AMAZON.DATE",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.RegisterSchedule.CheckInDate"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "delegationStrategy": "ALWAYS"
+        },
+        "prompts": [
+            {
+                "id": "Elicit.Slot.RegisterSchedule.Location",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "どちらの市区町村のホテルをお探しでしょうか"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.RegisterSchedule.CheckInDate",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "何月何日のご予約でしょうか？"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.RegisterSchedule.Name",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "予定はなんですか？"
+                    }
+                ]
+            },
+            {
+                "id": "Confirm.Intent.RegisterSchedule",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "{CheckInDate} {Location} {Name}の予定でよろしいですか？"
+                    }
+                ]
+            }
+        ]
+    }
+}
