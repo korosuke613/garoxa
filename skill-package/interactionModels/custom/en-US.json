@@ -1,7 +1,7 @@
 {
     "interactionModel": {
         "languageModel": {
-            "invocationName": "hello world",
+            "invocationName": "garoon schedule manage",
             "intents": [
                 {
                     "name": "AMAZON.CancelIntent",

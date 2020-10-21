@@ -2,13 +2,14 @@
 // Please visit https://alexa.design/cookbook for additional examples on implementing slots, dialog management,
 // session persistence, api calls, and more.
 import * as Alexa from 'ask-sdk-core';
+import {IntentRequest} from "ask-sdk-model";
 
 const LaunchRequestHandler: Alexa.RequestHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
     },
     handle(handlerInput) {
-        const speakOutput = 'Welcome. you can say Hello or Help. Which would you like to try?';
+        const speakOutput = 'ガルーン予定管理Alexaスキル。通称Garoxaへようこそ。予定を教えてください';
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakOutput)
@@ -28,6 +29,63 @@ const HelloWorldIntentHandler: Alexa.RequestHandler = {
             .getResponse();
     }
 };
+
+// const RegisterScheduleIntentHandler: Alexa.RequestHandler = {
+//     canHandle(handlerInput) {
+//         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+//             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'RegisterScheduleIntent'
+//             //&& Alexa.getDialogState(handlerInput.requestEnvelope) === 'COMPLETED';
+//     },
+//     handle(handlerInput) {
+//         const speakOutput = '予定を登録します';
+//         const repromptOutput = '予定の名前を言ってください';
+//         return handlerInput.responseBuilder
+//             .speak(speakOutput)
+//             .reprompt(repromptOutput)
+//             .getResponse();
+//     }
+// };
+
+/**
+ * OrderIntentHandlerHandler
+ * ユーザ発話：「＜渋谷＞／予約したい／ホテルを探して」
+ */
+const OrderIntentHandler: Alexa.RequestHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'RegisterScheduleIntent';
+    },
+    handle(handlerInput) {
+        const dialogState = Alexa.getDialogState(handlerInput.requestEnvelope)
+        const confirmationStatus = (handlerInput.requestEnvelope.request as IntentRequest).intent.confirmationStatus
+
+        if (dialogState !== 'COMPLETED') {
+            // ダイアログモデルのスロット質問中の場合
+            return handlerInput.responseBuilder
+                .addDelegateDirective()
+                .getResponse();
+        } else {
+            // ダイアログモデルのスロットが全て埋まった場合
+            if (confirmationStatus !== 'CONFIRMED') {
+                // 予約確認Alexa応答に対して「いいえ」発話時
+                // 予定登録キャンセル
+                return handlerInput.responseBuilder
+                    .speak('予定の登録をキャンセルします')
+                    .withShouldEndSession(true)
+                    .getResponse();
+            }
+
+            // 予約確認Alexa応答に対して「はい」発話時
+            return handlerInput.responseBuilder
+                .speak('予定を登録しました')
+                .withShouldEndSession(true)
+                .getResponse();
+        }
+
+    }
+};
+
+
 const HelpIntentHandler: Alexa.RequestHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
@@ -109,6 +167,7 @@ export const handler = Alexa.SkillBuilders.custom()
     .addRequestHandlers(
         LaunchRequestHandler,
         HelloWorldIntentHandler,
+        OrderIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
