@@ -148,8 +148,8 @@ export class GaroxaController{
         }[] = []
 
         regularSchedules.forEach((event)=>{
-            const startTime = dayjs(event.start.dateTime).format("HH時mm分")
-            const endTime = dayjs(event.end.dateTime).format("HH時mm分")
+            const startTime = dayjs(event.start.dateTime.slice(0, -6), {locale: "ja"}).format("HH時mm分") // 2020-10-23T12:00:00+09:00 → 2020-10-23T12:00:00
+            const endTime = dayjs(event.end.dateTime.slice(0, -6), {locale: "ja"}).format("HH時mm分")
             const subject = event.subject
 
             regularScheduleDescriptions.push({
@@ -164,16 +164,16 @@ export class GaroxaController{
     }
 }
 
-(async ()=>{
-    const garoxaController = new GaroxaController()
-    await garoxaController.getCurrentRegularSchedule({
-        date: "2020-10-24",
-        time: {
-            start: "12:00",
-            end: "18:00"
-        }
-    })
-})();
+// (async ()=>{
+//     const garoxaController = new GaroxaController()
+//     await garoxaController.getCurrentRegularSchedule({
+//         date: "2020-10-24",
+//         time: {
+//             start: "12:00",
+//             end: "18:00"
+//         }
+//     })
+// })();
 //
 // const startDate = dayjs("2020-10-22 22:00").locale("ja")
 // console.log(startDate)

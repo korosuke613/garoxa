@@ -157,16 +157,26 @@ const RegisterRegularScheduleIntent: Alexa.RequestHandler = {
                     .withShouldEndSession(true)
                     .getResponse();
             }
-
-            const garoxaController = new GaroxaController()
-            await garoxaController.registerRegularSchedule({
+            const detail = {
                 name: Alexa.getSlotValue(handlerInput.requestEnvelope, "Name"),
                 date: Alexa.getSlotValue(handlerInput.requestEnvelope, "CheckInDate"),
                 time: {
                     start: Alexa.getSlotValue(handlerInput.requestEnvelope, "TimeStart"),
                     end: Alexa.getSlotValue(handlerInput.requestEnvelope, "TimeEnd")
                 }
-            })
+            }
+
+            const garoxaController = new GaroxaController()
+
+            const currentRegularSchedules = await garoxaController.getCurrentRegularSchedule(detail)
+            if(currentRegularSchedules.length > 0){
+                console.log(`かぶっている予定が${currentRegularSchedules.length}件あります`)
+                currentRegularSchedules.forEach((value)=>{
+                    console.log(`${value.startTime}から${value.endTime}まで${value.subject}があります。`)
+                })
+            }
+
+            await garoxaController.registerRegularSchedule(detail)
 
             // 予約確認Alexa応答に対して「はい」発話時
             return handlerInput.responseBuilder
