@@ -71,7 +71,7 @@ export class GaroxaController{
         return result
     }
 }
-
+//
 // (async ()=>{
 //     const garoxaController = new GaroxaController()
 //     await garoxaController.registerSchedule({

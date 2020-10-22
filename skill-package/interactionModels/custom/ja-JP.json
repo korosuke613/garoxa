@@ -27,7 +27,31 @@
                     ]
                 },
                 {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
                     "name": "RegisterScheduleIntent",
+                    "slots": [
+                        {
+                            "name": "ScheduleType",
+                            "type": "SCHEDULE_TYPE",
+                            "samples": [
+                                "{ScheduleType}",
+                                "{ScheduleType} で"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "予定",
+                        "予定を登録",
+                        "{ScheduleType}",
+                        "{ScheduleType} で",
+                        "{ScheduleType} を登録"
+                    ]
+                },
+                {
+                    "name": "RegisterAllDayScheduleIntent",
                     "slots": [
                         {
                             "name": "Name",
@@ -52,16 +76,38 @@
                         "{Name}",
                         "{Name} です",
                         "{CheckInDate} に {Name}",
-                        "予定を登録",
-                        "予定をいれる"
+                        "期間予定を登録",
+                        "期間予定をいれる"
                     ]
-                },
-                {
-                    "name": "AMAZON.NavigateHomeIntent",
-                    "samples": []
                 }
             ],
-            "types": []
+            "types": [
+                {
+                    "name": "SCHEDULE_TYPE",
+                    "values": [
+                        {
+                            "id": "REGULAR",
+                            "name": {
+                                "value": "通常予定",
+                                "synonyms": [
+                                    "通常",
+                                    "通常予定"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "ALL_DAY",
+                            "name": {
+                                "value": "期間予定",
+                                "synonyms": [
+                                    "期間",
+                                    "期間予定"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
         },
         "dialog": {
             "intents": [
@@ -70,7 +116,26 @@
                     "delegationStrategy": "ALWAYS",
                     "confirmationRequired": true,
                     "prompts": {
-                        "confirmation": "Confirm.Intent.RegisterSchedule"
+                        "confirmation": "Confirm.Intent.RegisterScheduleIntent"
+                    },
+                    "slots": [
+                        {
+                            "name": "ScheduleType",
+                            "type": "SCHEDULE_TYPE",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.RegisterScheduleIntent.ScheduleType"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "RegisterAllDayScheduleIntent",
+                    "delegationStrategy": "ALWAYS",
+                    "confirmationRequired": true,
+                    "prompts": {
+                        "confirmation": "Confirm.Intent.RegisterAllDayScheduleIntent"
                     },
                     "slots": [
                         {
@@ -79,7 +144,7 @@
                             "confirmationRequired": false,
                             "elicitationRequired": true,
                             "prompts": {
-                                "elicitation": "Elicit.Slot.RegisterSchedule.Name"
+                                "elicitation": "Elicit.Slot.RegisterAllDayScheduleIntent.Name"
                             }
                         },
                         {
@@ -88,7 +153,7 @@
                             "confirmationRequired": false,
                             "elicitationRequired": true,
                             "prompts": {
-                                "elicitation": "Elicit.Slot.RegisterSchedule.CheckInDate"
+                                "elicitation": "Elicit.Slot.RegisterAllDayScheduleIntent.CheckInDate"
                             }
                         }
                     ]
@@ -98,7 +163,25 @@
         },
         "prompts": [
             {
-                "id": "Elicit.Slot.RegisterSchedule.CheckInDate",
+                "id": "Elicit.Slot.RegisterScheduleIntent.ScheduleType",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "通常予定ですか？期間予定ですか？"
+                    }
+                ]
+            },
+            {
+                "id": "Confirm.Intent.RegisterScheduleIntent",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "{ScheduleType} でよろしいですか？"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.RegisterAllDayScheduleIntent.CheckInDate",
                 "variations": [
                     {
                         "type": "PlainText",
@@ -107,7 +190,7 @@
                 ]
             },
             {
-                "id": "Elicit.Slot.RegisterSchedule.Name",
+                "id": "Elicit.Slot.RegisterAllDayScheduleIntent.Name",
                 "variations": [
                     {
                         "type": "PlainText",
@@ -116,7 +199,7 @@
                 ]
             },
             {
-                "id": "Confirm.Intent.RegisterSchedule",
+                "id": "Confirm.Intent.RegisterAllDayScheduleIntent",
                 "variations": [
                     {
                         "type": "PlainText",
