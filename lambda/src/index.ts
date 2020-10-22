@@ -3,7 +3,7 @@
 // session persistence, api calls, and more.
 import * as Alexa from 'ask-sdk-core';
 import {IntentRequest} from "ask-sdk-model";
-import {GaroxaContloller} from "./GaroxaContloller";
+import {GaroxaController} from "./GaroxaController";
 
 const LaunchRequestHandler: Alexa.RequestHandler = {
     canHandle(handlerInput) {
@@ -76,7 +76,7 @@ const OrderIntentHandler: Alexa.RequestHandler = {
                     .getResponse();
             }
 
-            const garoxaContloller = new GaroxaContloller()
+            const garoxaContloller = new GaroxaController()
             await garoxaContloller.registerSchedule({
                 name: Alexa.getSlotValue(handlerInput.requestEnvelope, "Name"),
                 date: Alexa.getSlotValue(handlerInput.requestEnvelope, "CheckInDate")

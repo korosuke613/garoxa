@@ -4,7 +4,7 @@
   "description": "alexa utility for quickly building skills",
   "main": "index.js",
   "scripts": {
-    "run": "ts-node ./src/GaroxaContloller.ts",
+    "run": "ts-node src/GaroxaController.ts",
     "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

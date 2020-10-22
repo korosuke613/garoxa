@@ -14,7 +14,7 @@ export interface GaroonLoginInformation{
     timezone: string
 }
 
-export class GaroxaContloller{
+export class GaroxaController{
     private readonly client: GaroonRestAPIClient
     private readonly garoonLoginInformation: GaroonLoginInformation
 
