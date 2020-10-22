@@ -12,6 +12,14 @@ Parameters:
     Type: String
   CodeVersion:
     Type: String
+  GaroonUsername:
+    Type: String
+  GaroonPassword:
+    Type: String
+  GaroonDomain:
+    Type: String
+  GaroonTimezone:
+    Type: String
 Resources:
   AlexaSkillIAMRole:
       Type: AWS::IAM::Role
@@ -47,6 +55,12 @@ Resources:
       Role: !GetAtt AlexaSkillIAMRole.Arn
       MemorySize: 512
       Timeout: 60
+      Environment:
+        Variables:
+          GAROON_USERNAME: !Ref GaroonUsername
+          GAROON_PASSWORD: !Ref GaroonPassword
+          GAROON_DOMAIN: !Ref GaroonDomain
+          GAROON_TIMEZONE: !Ref GaroonTimezone
   AlexaSkillFunctionEventPermission:
     Type: AWS::Lambda::Permission
     Properties:

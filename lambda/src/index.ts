@@ -3,6 +3,7 @@
 // session persistence, api calls, and more.
 import * as Alexa from 'ask-sdk-core';
 import {IntentRequest} from "ask-sdk-model";
+import {GaroxaContloller} from "./GaroxaContloller";
 
 const LaunchRequestHandler: Alexa.RequestHandler = {
     canHandle(handlerInput) {
@@ -55,7 +56,7 @@ const OrderIntentHandler: Alexa.RequestHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'RegisterScheduleIntent';
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
         const dialogState = Alexa.getDialogState(handlerInput.requestEnvelope)
         const confirmationStatus = (handlerInput.requestEnvelope.request as IntentRequest).intent.confirmationStatus
 
@@ -74,6 +75,12 @@ const OrderIntentHandler: Alexa.RequestHandler = {
                     .withShouldEndSession(true)
                     .getResponse();
             }
+
+            const garoxaContloller = new GaroxaContloller()
+            await garoxaContloller.registerSchedule({
+                name: Alexa.getSlotValue(handlerInput.requestEnvelope, "Name"),
+                date: Alexa.getSlotValue(handlerInput.requestEnvelope, "CheckInDate")
+            })
 
             // 予約確認Alexa応答に対して「はい」発話時
             return handlerInput.responseBuilder
