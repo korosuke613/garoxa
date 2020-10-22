@@ -54,15 +54,11 @@ const RegisterScheduleIntent: Alexa.RequestHandler = {
     },
     async handle(handlerInput) {
         const dialogState = Alexa.getDialogState(handlerInput.requestEnvelope)
-        const confirmationStatus = (handlerInput.requestEnvelope.request as IntentRequest).intent.confirmationStatus
 
         if (dialogState !== 'COMPLETED') {
             // ダイアログモデルのスロット質問中の場合
             return handlerInput.responseBuilder
-                .addDelegateDirective({
-                    name: "RegisterAllDayScheduleIntent",
-                    confirmationStatus: "NONE"
-                })
+                .addDelegateDirective()
                 .getResponse();
         } else {
             if(Alexa.getSlot(handlerInput.requestEnvelope, "ScheduleType").resolutions.resolutionsPerAuthority[0].values[0].value.id === "ALL_DAY"){
@@ -73,7 +69,6 @@ const RegisterScheduleIntent: Alexa.RequestHandler = {
                         name: "RegisterAllDayScheduleIntent",
                         confirmationStatus: "NONE"
                     })
-//                    .withShouldEndSession(true)
                     .getResponse();
             }
             // 予約確認Alexa応答に対して「はい」発話時
@@ -116,7 +111,7 @@ const RegisterAllDayScheduleIntent: Alexa.RequestHandler = {
             }
 
             const garoxaContloller = new GaroxaController()
-            await garoxaContloller.registerSchedule({
+            await garoxaContloller.registerAllDaySchedule({
                 name: Alexa.getSlotValue(handlerInput.requestEnvelope, "Name"),
                 date: Alexa.getSlotValue(handlerInput.requestEnvelope, "CheckInDate")
             })

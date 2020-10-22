@@ -1,10 +1,15 @@
 import {GaroonRestAPIClient} from "@miyajan/garoon-rest";
 import dayjs = require("dayjs");
+require('dayjs/locale/ja')
 require('dotenv').config();
 
 export interface GaroonScheduleDetail{
     name: string
     date: string
+    time?: {
+        start: string
+        end: string
+    }
 }
 
 export interface GaroonLoginInformation{
@@ -40,7 +45,7 @@ export class GaroxaController{
         });
     }
 
-    public getRegisterScheduleParams(detail: GaroonScheduleDetail){
+    public getRegisterAllDayScheduleParams(detail: GaroonScheduleDetail){
         const startDate = dayjs(detail.date).toISOString()
         const params = {
             subject: detail.name,
@@ -64,8 +69,43 @@ export class GaroxaController{
         return params
     }
 
-    public async registerSchedule(detail: GaroonScheduleDetail){
-        const params = this.getRegisterScheduleParams(detail)
+    public async registerAllDaySchedule(detail: GaroonScheduleDetail){
+        const params = this.getRegisterAllDayScheduleParams(detail)
+        const result = await this.client.schedule.addEvent(params as any)
+        console.log(result)
+        return result
+    }
+
+    public getRegisterRegularScheduleParams(detail: GaroonScheduleDetail){
+        const startTimeString = `${detail.date} ${detail.time.start}`
+        const startTime = dayjs(startTimeString).locale("ja").toISOString()
+        const endTimeString = `${detail.date} ${detail.time.end}`
+        const endTime = dayjs(endTimeString).locale("ja").toISOString()
+
+        const params = {
+            subject: detail.name,
+            eventType: "REGULAR",
+            start: {
+                dateTime: startTime,
+                timeZone: this.garoonLoginInformation.timezone
+            },
+            end: {
+                dateTime: endTime,
+                timeZone: this.garoonLoginInformation.timezone
+            },
+            attendees: [
+                {
+                    type: "USER",
+                    code: this.garoonLoginInformation.username
+                }
+            ],
+        }
+        console.log(params)
+        return params
+    }
+
+    public async registerRegularSchedule(detail: GaroonScheduleDetail){
+        const params = this.getRegisterRegularScheduleParams(detail)
         const result = await this.client.schedule.addEvent(params as any)
         console.log(result)
         return result
@@ -74,9 +114,17 @@ export class GaroxaController{
 //
 // (async ()=>{
 //     const garoxaController = new GaroxaController()
-//     await garoxaController.registerSchedule({
+//     await garoxaController.registerRegularSchedule({
 //         name: "test2",
-//         date: "2020-10-22"
+//         date: "2020-10-22",
+//         time: {
+//             start: "10:00",
+//             end: "12:00"
+//         }
 //     })
 // })();
+//
+// const startDate = dayjs("2020-10-22 22:00").locale("ja")
+// console.log(startDate)
+// console.log(startDate.set("hour", 10))
 
