@@ -40,10 +40,9 @@ export class GaroxaController{
         });
     }
 
-    public async registerSchedule(detail: GaroonScheduleDetail|undefined){
+    public getRegisterScheduleParams(detail: GaroonScheduleDetail){
         const startDate = dayjs(detail.date).toISOString()
-
-        const result = await this.client.schedule.addEvent({
+        const params = {
             subject: detail.name,
             eventType: "ALL_DAY",
             start: {
@@ -60,17 +59,24 @@ export class GaroxaController{
                     code: this.garoonLoginInformation.username
                 }
             ],
-        })
+        }
+        console.log(params)
+        return params
+    }
+
+    public async registerSchedule(detail: GaroonScheduleDetail){
+        const params = this.getRegisterScheduleParams(detail)
+        const result = await this.client.schedule.addEvent(params as any)
         console.log(result)
         return result
     }
 }
 
-// (async ()=>{
-//     const garoxaContloller = new GaroxaContloller()
-//     await garoxaContloller.registerSchedule({
-//         name: "test",
-//         date: "2020-10-22"
-//     })
-// })();
+(async ()=>{
+    const garoxaController = new GaroxaController()
+    await garoxaController.registerSchedule({
+        name: "test2",
+        date: "2020-10-22"
+    })
+})();
 

@@ -77,7 +77,7 @@ const OrderIntentHandler: Alexa.RequestHandler = {
             }
 
             const garoxaContloller = new GaroxaController()
-            await garoxaContloller.registerSchedule({
+            await garoxaContloller.getRegisterScheduleParams({
                 name: Alexa.getSlotValue(handlerInput.requestEnvelope, "Name"),
                 date: Alexa.getSlotValue(handlerInput.requestEnvelope, "CheckInDate")
             })
