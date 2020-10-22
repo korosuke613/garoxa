@@ -129,6 +129,10 @@
                         "通常予定を登録",
                         "通常予定をいれる"
                     ]
+                },
+                {
+                    "name": "ConfirmRegisterRegularScheduleIntent",
+                    "samples": []
                 }
             ],
             "types": [
@@ -250,6 +254,14 @@
                             }
                         }
                     ]
+                },
+                {
+                    "name": "ConfirmRegisterRegularScheduleIntent",
+                    "delegationStrategy": "ALWAYS",
+                    "confirmationRequired": true,
+                    "prompts": {
+                        "confirmation": "Confirm.Intent.ConfirmRegisterRegularScheduleIntent"
+                    }
                 }
             ],
             "delegationStrategy": "ALWAYS"
@@ -333,6 +345,15 @@
                     {
                         "type": "PlainText",
                         "value": "{CheckInDate} {TimeStart} から {TimeEnd} まで {Name}の予定でよろしいですか？"
+                    }
+                ]
+            },
+            {
+                "id": "Confirm.Intent.ConfirmRegisterRegularScheduleIntent",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "予定を登録しても大丈夫ですか？"
                     }
                 ]
             }

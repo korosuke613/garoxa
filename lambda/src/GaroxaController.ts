@@ -22,6 +22,7 @@ export interface GaroonLoginInformation{
 export class GaroxaController{
     private readonly client: GaroonRestAPIClient
     private readonly garoonLoginInformation: GaroonLoginInformation
+    public detail: GaroonScheduleDetail
 
     constructor() {
         this.garoonLoginInformation = {

@@ -5,6 +5,8 @@ import * as Alexa from 'ask-sdk-core';
 import {IntentRequest} from "ask-sdk-model";
 import {GaroxaController} from "./GaroxaController";
 
+const garoxaController = new GaroxaController()
+
 const LaunchRequestHandler: Alexa.RequestHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
@@ -166,14 +168,26 @@ const RegisterRegularScheduleIntent: Alexa.RequestHandler = {
                 }
             }
 
-            const garoxaController = new GaroxaController()
-
             const currentRegularSchedules = await garoxaController.getCurrentRegularSchedule(detail)
             if(currentRegularSchedules.length > 0){
-                console.log(`かぶっている予定が${currentRegularSchedules.length}件あります`)
+                let speak = `かぶっている予定が${currentRegularSchedules.length}件あります。`
                 currentRegularSchedules.forEach((value)=>{
-                    console.log(`${value.startTime}から${value.endTime}まで${value.subject}があります。`)
+                    speak += `${value.startTime}から${value.endTime}まで${value.subject}があります。`
                 })
+
+                garoxaController.detail = detail
+
+                return handlerInput.responseBuilder
+                    .speak(speak + "予定を登録しても大丈夫ですか？")
+                    // .addDelegateDirective({
+                    //     name: "ConfirmRegisterRegularScheduleIntent",
+                    //     confirmationStatus: "NONE"
+                    // })
+                    .addConfirmIntentDirective({
+                        name: "ConfirmRegisterRegularScheduleIntent",
+                        confirmationStatus: "NONE"
+                    })
+                    .getResponse();
             }
 
             await garoxaController.registerRegularSchedule(detail)
@@ -184,6 +198,32 @@ const RegisterRegularScheduleIntent: Alexa.RequestHandler = {
                 .withShouldEndSession(true)
                 .getResponse();
         }
+    }
+};
+
+const ConfirmRegisterRegularScheduleIntent: Alexa.RequestHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'ConfirmRegisterRegularScheduleIntent'
+    },
+    async handle(handlerInput) {
+        const confirmationStatus = (handlerInput.requestEnvelope.request as IntentRequest).intent.confirmationStatus
+        if (confirmationStatus === 'CONFIRMED') {
+
+            const speakOutput = '予定を登録しました';
+
+            await garoxaController.registerRegularSchedule(garoxaController.detail)
+
+            return handlerInput.responseBuilder
+                .speak(speakOutput)
+                .withShouldEndSession(true)
+                .getResponse();
+        }
+
+        return handlerInput.responseBuilder
+            .speak('予定の登録をキャンセルします')
+            .withShouldEndSession(true)
+            .getResponse();
     }
 };
 
@@ -272,6 +312,7 @@ export const handler = Alexa.SkillBuilders.custom()
         RegisterScheduleIntent,
         RegisterAllDayScheduleIntent,
         RegisterRegularScheduleIntent,
+        ConfirmRegisterRegularScheduleIntent,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
