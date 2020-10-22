@@ -79,6 +79,56 @@
                         "期間予定を登録",
                         "期間予定をいれる"
                     ]
+                },
+                {
+                    "name": "RegisterRegularScheduleIntent",
+                    "slots": [
+                        {
+                            "name": "Name",
+                            "type": "AMAZON.City",
+                            "samples": [
+                                "{Name}",
+                                "{Name} です"
+                            ]
+                        },
+                        {
+                            "name": "CheckInDate",
+                            "type": "AMAZON.DATE",
+                            "samples": [
+                                "{CheckInDate}",
+                                "{CheckInDate} です"
+                            ]
+                        },
+                        {
+                            "name": "TimeStart",
+                            "type": "AMAZON.TIME",
+                            "samples": [
+                                "{TimeStart}",
+                                "{TimeStart} です"
+                            ]
+                        },
+                        {
+                            "name": "TimeEnd",
+                            "type": "AMAZON.TIME",
+                            "samples": [
+                                "{TimeStart}",
+                                "{TimeStart} です"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "通常予定で {CheckInDate}",
+                        "通常予定で {CheckInDate} です",
+                        "通常予定で {Name}",
+                        "通常予定で {Name} です",
+                        "通常予定で {TimeStart} ",
+                        "通常予定で {TimeStart} から {TimeEnd} まで",
+                        "通常予定で {CheckInDate} に {TimeStart} から {TimeEnd} まで",
+                        "通常予定で {CheckInDate} に {TimeStart} から {TimeEnd} まで {Name}",
+                        "通常予定で {CheckInDate} に {Name}",
+                        "通常予定を登録",
+                        "通常予定をいれる"
+                    ]
                 }
             ],
             "types": [
@@ -154,6 +204,52 @@
                             }
                         }
                     ]
+                },
+                {
+                    "name": "RegisterRegularScheduleIntent",
+                    "delegationStrategy": "ALWAYS",
+                    "confirmationRequired": true,
+                    "prompts": {
+                        "confirmation": "Confirm.Intent.RegisterRegularScheduleIntent"
+                    },
+                    "slots": [
+                        {
+                            "name": "Name",
+                            "type": "AMAZON.City",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.RegisterRegularScheduleIntent.Name"
+                            }
+                        },
+                        {
+                            "name": "CheckInDate",
+                            "type": "AMAZON.DATE",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.RegisterRegularScheduleIntent.CheckInDate"
+                            }
+                        },
+                        {
+                            "name": "TimeStart",
+                            "type": "AMAZON.TIME",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.RegisterRegularScheduleIntent.TimeStart"
+                            }
+                        },
+                        {
+                            "name": "TimeEnd",
+                            "type": "AMAZON.TIME",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.RegisterRegularScheduleIntent.TimeEnd"
+                            }
+                        }
+                    ]
                 }
             ],
             "delegationStrategy": "ALWAYS"
@@ -192,6 +288,51 @@
                     {
                         "type": "PlainText",
                         "value": "{CheckInDate} {Name}の予定でよろしいですか？"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.RegisterRegularScheduleIntent.CheckInDate",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "何月何日の予定ですか？"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.RegisterRegularScheduleIntent.Name",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "予定はなんですか？"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.RegisterRegularScheduleIntent.TimeStart",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "何時から始まりますか？"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.RegisterRegularScheduleIntent.TimeEnd",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "何時に終わりますか？"
+                    }
+                ]
+            },
+            {
+                "id": "Confirm.Intent.RegisterRegularScheduleIntent",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "{CheckInDate} {TimeStart} から {TimeEnd} まで {Name}の予定でよろしいですか？"
                     }
                 ]
             }

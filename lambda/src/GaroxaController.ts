@@ -77,10 +77,13 @@ export class GaroxaController{
     }
 
     public getRegisterRegularScheduleParams(detail: GaroonScheduleDetail){
+        console.log(detail)
         const startTimeString = `${detail.date} ${detail.time.start}`
-        const startTime = dayjs(startTimeString).locale("ja").toISOString()
+        const startTime = dayjs(startTimeString, {locale: "ja"}).format("YYYY-MM-DDTHH:mm:00.000")
         const endTimeString = `${detail.date} ${detail.time.end}`
-        const endTime = dayjs(endTimeString).locale("ja").toISOString()
+        const endTime = dayjs(endTimeString, {locale:"ja"}).format("YYYY-MM-DDTHH:mm:00.000")
+        console.log(startTime)
+        console.log(endTime)
 
         const params = {
             subject: detail.name,
@@ -111,15 +114,15 @@ export class GaroxaController{
         return result
     }
 }
-//
+
 // (async ()=>{
 //     const garoxaController = new GaroxaController()
 //     await garoxaController.registerRegularSchedule({
-//         name: "test2",
-//         date: "2020-10-22",
+//         name: "test3",
+//         date: "2020-10-25",
 //         time: {
-//             start: "10:00",
-//             end: "12:00"
+//             start: "12:00",
+//             end: "18:00"
 //         }
 //     })
 // })();
