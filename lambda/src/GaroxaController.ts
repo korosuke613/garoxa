@@ -72,11 +72,11 @@ export class GaroxaController{
     }
 }
 
-(async ()=>{
-    const garoxaController = new GaroxaController()
-    await garoxaController.registerSchedule({
-        name: "test2",
-        date: "2020-10-22"
-    })
-})();
+// (async ()=>{
+//     const garoxaController = new GaroxaController()
+//     await garoxaController.registerSchedule({
+//         name: "test2",
+//         date: "2020-10-22"
+//     })
+// })();
 
