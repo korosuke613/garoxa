@@ -1,9 +1,10 @@
 import {GaroonRestAPIClient} from "@miyajan/garoon-rest";
+import dayjs = require("dayjs");
 require('dotenv').config();
 
 export interface GaroonScheduleDetail{
     name: string
-    date: Date
+    date: string
 }
 
 export interface GaroonLoginInformation{
@@ -40,14 +41,17 @@ export class GaroxaContloller{
     }
 
     public async registerSchedule(detail: GaroonScheduleDetail|undefined){
+        const startDate = dayjs(detail.date).toISOString()
+
         const result = await this.client.schedule.addEvent({
+            subject: detail.name,
             eventType: "ALL_DAY",
             start: {
-                dateTime: "2020-10-21T00:00:00+09:00",
+                dateTime: startDate,
                 timeZone: this.garoonLoginInformation.timezone
             },
             end: {
-                dateTime: "2020-10-22T23:59:59+09:00",
+                dateTime: startDate,
                 timeZone: this.garoonLoginInformation.timezone
             },
             attendees: [
@@ -62,8 +66,11 @@ export class GaroxaContloller{
     }
 }
 
-(async ()=>{
-    const garoxaContloller = new GaroxaContloller()
-    await garoxaContloller.registerSchedule(undefined)
-})();
+// (async ()=>{
+//     const garoxaContloller = new GaroxaContloller()
+//     await garoxaContloller.registerSchedule({
+//         name: "test",
+//         date: "2020-10-22"
+//     })
+// })();
 

@@ -15,9 +15,17 @@
           "runtime": "nodejs10.x",
           "handler": "build/index.handler",
           "templatePath": "./infrastructure/cfn-deployer/skill-stack.yaml",
-          "awsRegion": "ap-northeast-1"
+          "awsRegion": "ap-northeast-1",
+          "cfn": {
+            "parameters": {
+              "GaroonUsername": "",
+              "GaroonPassword": "",
+              "GaroonDomain": "",
+              "GaroonTimezone": ""
+            }
+          }
         },
-        "type": "@ask-cli/lambda-deployer"
+        "type": "@ask-cli/cfn-deployer"
       }
     }
   }

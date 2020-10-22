@@ -28,7 +28,7 @@
     "apis": {
       "custom": {
         "endpoint": {
-          "uri": "arn:aws:lambda:ap-northeast-1:568211859639:function:ask-garoxa-default-default-1603248432483"
+          "uri": "arn:aws:lambda:ap-northeast-1:568211859639:function:ask-garoxa-default-skillStack-1-AlexaSkillFunction-110NONTU3DDEQ"
         }
       }
     },
