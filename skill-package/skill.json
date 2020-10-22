@@ -2,14 +2,6 @@
   "manifest": {
     "publishingInformation": {
       "locales": {
-        "en-US": {
-          "summary": "Sample Short Description",
-          "examplePhrases": [
-            "Alexa open hello world"
-          ],
-          "name": "garoxa",
-          "description": "Sample Full Description"
-        },
         "ja-JP": {
           "summary": "Garoxaだよ",
           "examplePhrases": [

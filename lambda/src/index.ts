@@ -2,8 +2,9 @@
 // Please visit https://alexa.design/cookbook for additional examples on implementing slots, dialog management,
 // session persistence, api calls, and more.
 import * as Alexa from 'ask-sdk-core';
-import {IntentRequest} from "ask-sdk-model";
+import {IntentRequest, interfaces} from "ask-sdk-model";
 import {GaroxaController} from "./GaroxaController";
+import ListItem = interfaces.display.ListItem;
 
 const garoxaController = new GaroxaController()
 
@@ -170,19 +171,17 @@ const RegisterRegularScheduleIntent: Alexa.RequestHandler = {
 
             const currentRegularSchedules = await garoxaController.getCurrentRegularSchedule(detail)
             if(currentRegularSchedules.length > 0){
-                let speak = `かぶっている予定が${currentRegularSchedules.length}件あります。`
+                const speakFirst = `かぶっている予定が${currentRegularSchedules.length}件あります。`
+                let speakSchedules = ""
                 currentRegularSchedules.forEach((value)=>{
-                    speak += `${value.startTime}から${value.endTime}まで${value.subject}があります。`
+                    const speakSchedule = `${value.startTime}から${value.endTime}まで${value.subject}があります。\n`
+                    speakSchedules += speakSchedule
                 })
 
                 garoxaController.detail = detail
 
                 return handlerInput.responseBuilder
-                    .speak(speak + "予定を登録しても大丈夫ですか？")
-                    // .addDelegateDirective({
-                    //     name: "ConfirmRegisterRegularScheduleIntent",
-                    //     confirmationStatus: "NONE"
-                    // })
+                    .speak(speakFirst + speakSchedules + "予定を登録しても大丈夫ですか？")
                     .addConfirmIntentDirective({
                         name: "ConfirmRegisterRegularScheduleIntent",
                         confirmationStatus: "NONE"
