@@ -59,26 +59,19 @@ const RegisterScheduleIntent: Alexa.RequestHandler = {
         if (dialogState !== 'COMPLETED') {
             // ダイアログモデルのスロット質問中の場合
             return handlerInput.responseBuilder
-                .addDelegateDirective()
+                .addDelegateDirective({
+                    name: "RegisterAllDayScheduleIntent",
+                    confirmationStatus: "NONE"
+                })
                 .getResponse();
         } else {
-            // ダイアログモデルのスロットが全て埋まった場合
-            if (confirmationStatus !== 'CONFIRMED') {
-                // 予約確認Alexa応答に対して「いいえ」発話時
-                // 予定登録キャンセル
-                return handlerInput.responseBuilder
-                    .speak('予定の登録をキャンセルします')
-                    .withShouldEndSession(true)
-                    .getResponse();
-            }
-
-            if(Alexa.getSlotValue(handlerInput.requestEnvelope, "ScheduleType") === "期間予定"){
+            if(Alexa.getSlot(handlerInput.requestEnvelope, "ScheduleType").resolutions.resolutionsPerAuthority[0].values[0].value.id === "ALL_DAY"){
                 // 予約確認Alexa応答に対して「はい」発話時
                 return handlerInput.responseBuilder
                     .speak("期間予定を登録します。予定の詳細を教えてください")
                     .addDelegateDirective({
                         name: "RegisterAllDayScheduleIntent",
-                        confirmationStatus: "CONFIRMED"
+                        confirmationStatus: "NONE"
                     })
 //                    .withShouldEndSession(true)
                     .getResponse();
@@ -104,6 +97,7 @@ const RegisterAllDayScheduleIntent: Alexa.RequestHandler = {
     async handle(handlerInput) {
         const dialogState = Alexa.getDialogState(handlerInput.requestEnvelope)
         const confirmationStatus = (handlerInput.requestEnvelope.request as IntentRequest).intent.confirmationStatus
+        console.log(handlerInput)
 
         if (dialogState !== 'COMPLETED') {
             // ダイアログモデルのスロット質問中の場合

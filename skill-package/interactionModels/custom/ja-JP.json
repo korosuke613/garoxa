@@ -71,11 +71,11 @@
                         }
                     ],
                     "samples": [
-                        "{CheckInDate}",
-                        "{CheckInDate} です",
-                        "{Name}",
-                        "{Name} です",
-                        "{CheckInDate} に {Name}",
+                        "期間予定で {CheckInDate}",
+                        "期間予定で {CheckInDate} です",
+                        "期間予定で {Name}",
+                        "期間予定で {Name} です",
+                        "期間予定で {CheckInDate} に {Name}",
                         "期間予定を登録",
                         "期間予定をいれる"
                     ]
@@ -114,10 +114,7 @@
                 {
                     "name": "RegisterScheduleIntent",
                     "delegationStrategy": "ALWAYS",
-                    "confirmationRequired": true,
-                    "prompts": {
-                        "confirmation": "Confirm.Intent.RegisterScheduleIntent"
-                    },
+                    "confirmationRequired": false,
                     "slots": [
                         {
                             "name": "ScheduleType",
@@ -168,15 +165,6 @@
                     {
                         "type": "PlainText",
                         "value": "通常予定ですか？期間予定ですか？"
-                    }
-                ]
-            },
-            {
-                "id": "Confirm.Intent.RegisterScheduleIntent",
-                "variations": [
-                    {
-                        "type": "PlainText",
-                        "value": "{ScheduleType} でよろしいですか？"
                     }
                 ]
             },
