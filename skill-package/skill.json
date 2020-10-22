@@ -13,10 +13,10 @@
         "ja-JP": {
           "summary": "Garoxaだよ",
           "examplePhrases": [
-            "アレクサ、ガロクサを開いて",
-            "アレクサ、ガルクサを開いて"
+            "アレクサ、ガルーン予定管理を開いて",
+            "アレクサ、ガルーン予定管理"
           ],
-          "name": "ガルクサ",
+          "name": "Garoxa",
           "description": "Garoonに予定を登録するぜ！"
         }
       },

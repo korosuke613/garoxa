@@ -16,3 +16,4 @@ jspm_packages
 build/
 out/
 ask-resources.json
+*.zip

@@ -3,7 +3,9 @@
 // session persistence, api calls, and more.
 import * as Alexa from 'ask-sdk-core';
 import {IntentRequest} from "ask-sdk-model";
-import {GaroxaContloller} from "./GaroxaContloller";
+import {GaroxaController} from "./GaroxaController";
+
+const garoxaController = new GaroxaController()
 
 const LaunchRequestHandler: Alexa.RequestHandler = {
     canHandle(handlerInput) {
@@ -47,18 +49,55 @@ const HelloWorldIntentHandler: Alexa.RequestHandler = {
 //     }
 // };
 
+const RegisterScheduleIntent: Alexa.RequestHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'RegisterScheduleIntent'
+    },
+    async handle(handlerInput) {
+        const dialogState = Alexa.getDialogState(handlerInput.requestEnvelope)
+
+        if (dialogState !== 'COMPLETED') {
+            // ダイアログモデルのスロット質問中の場合
+            return handlerInput.responseBuilder
+                .addDelegateDirective()
+                .getResponse();
+        } else {
+            if(Alexa.getSlot(handlerInput.requestEnvelope, "ScheduleType").resolutions.resolutionsPerAuthority[0].values[0].value.id === "ALL_DAY"){
+                // 予約確認Alexa応答に対して「はい」発話時
+                return handlerInput.responseBuilder
+                    .speak("期間予定を登録します。予定の詳細を教えてください")
+                    .addDelegateDirective({
+                        name: "RegisterAllDayScheduleIntent",
+                        confirmationStatus: "NONE"
+                    })
+                    .getResponse();
+            }
+            // 予約確認Alexa応答に対して「はい」発話時
+            return handlerInput.responseBuilder
+                .speak("通常予定を登録します。予定の詳細を教えてください")
+                .addDelegateDirective({
+                    name: "RegisterRegularScheduleIntent",
+                    confirmationStatus: "NONE"
+                })
+                .getResponse();
+        }
+    }
+};
+
 /**
  * OrderIntentHandlerHandler
  * ユーザ発話：「＜渋谷＞／予約したい／ホテルを探して」
  */
-const OrderIntentHandler: Alexa.RequestHandler = {
+const RegisterAllDayScheduleIntent: Alexa.RequestHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
-            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'RegisterScheduleIntent';
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'RegisterAllDayScheduleIntent'
     },
     async handle(handlerInput) {
         const dialogState = Alexa.getDialogState(handlerInput.requestEnvelope)
         const confirmationStatus = (handlerInput.requestEnvelope.request as IntentRequest).intent.confirmationStatus
+        console.log(handlerInput)
 
         if (dialogState !== 'COMPLETED') {
             // ダイアログモデルのスロット質問中の場合
@@ -76,8 +115,8 @@ const OrderIntentHandler: Alexa.RequestHandler = {
                     .getResponse();
             }
 
-            const garoxaContloller = new GaroxaContloller()
-            await garoxaContloller.registerSchedule({
+            const garoxaContloller = new GaroxaController()
+            await garoxaContloller.registerAllDaySchedule({
                 name: Alexa.getSlotValue(handlerInput.requestEnvelope, "Name"),
                 date: Alexa.getSlotValue(handlerInput.requestEnvelope, "CheckInDate")
             })
@@ -88,7 +127,103 @@ const OrderIntentHandler: Alexa.RequestHandler = {
                 .withShouldEndSession(true)
                 .getResponse();
         }
+    }
+};
 
+/**
+ * OrderIntentHandlerHandler
+ * ユーザ発話：「＜渋谷＞／予約したい／ホテルを探して」
+ */
+const RegisterRegularScheduleIntent: Alexa.RequestHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'RegisterRegularScheduleIntent'
+    },
+    async handle(handlerInput) {
+        const dialogState = Alexa.getDialogState(handlerInput.requestEnvelope)
+        const confirmationStatus = (handlerInput.requestEnvelope.request as IntentRequest).intent.confirmationStatus
+        console.log(handlerInput)
+
+        if (dialogState !== 'COMPLETED') {
+            // ダイアログモデルのスロット質問中の場合
+            return handlerInput.responseBuilder
+                .addDelegateDirective()
+                .getResponse();
+        } else {
+            // ダイアログモデルのスロットが全て埋まった場合
+            if (confirmationStatus !== 'CONFIRMED') {
+                // 予約確認Alexa応答に対して「いいえ」発話時
+                // 予定登録キャンセル
+                return handlerInput.responseBuilder
+                    .speak('予定の登録をキャンセルします')
+                    .withShouldEndSession(true)
+                    .getResponse();
+            }
+            const detail = {
+                name: Alexa.getSlotValue(handlerInput.requestEnvelope, "Name"),
+                date: Alexa.getSlotValue(handlerInput.requestEnvelope, "CheckInDate"),
+                time: {
+                    start: Alexa.getSlotValue(handlerInput.requestEnvelope, "TimeStart"),
+                    end: Alexa.getSlotValue(handlerInput.requestEnvelope, "TimeEnd")
+                }
+            }
+
+            const currentRegularSchedules = await garoxaController.getCurrentRegularSchedule(detail)
+            if(currentRegularSchedules.length > 0){
+                let speak = `かぶっている予定が${currentRegularSchedules.length}件あります。`
+                currentRegularSchedules.forEach((value)=>{
+                    speak += `${value.startTime}から${value.endTime}まで${value.subject}があります。`
+                })
+
+                garoxaController.detail = detail
+
+                return handlerInput.responseBuilder
+                    .speak(speak + "予定を登録しても大丈夫ですか？")
+                    // .addDelegateDirective({
+                    //     name: "ConfirmRegisterRegularScheduleIntent",
+                    //     confirmationStatus: "NONE"
+                    // })
+                    .addConfirmIntentDirective({
+                        name: "ConfirmRegisterRegularScheduleIntent",
+                        confirmationStatus: "NONE"
+                    })
+                    .getResponse();
+            }
+
+            await garoxaController.registerRegularSchedule(detail)
+
+            // 予約確認Alexa応答に対して「はい」発話時
+            return handlerInput.responseBuilder
+                .speak('予定を登録しました')
+                .withShouldEndSession(true)
+                .getResponse();
+        }
+    }
+};
+
+const ConfirmRegisterRegularScheduleIntent: Alexa.RequestHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'ConfirmRegisterRegularScheduleIntent'
+    },
+    async handle(handlerInput) {
+        const confirmationStatus = (handlerInput.requestEnvelope.request as IntentRequest).intent.confirmationStatus
+        if (confirmationStatus === 'CONFIRMED') {
+
+            const speakOutput = '予定を登録しました';
+
+            await garoxaController.registerRegularSchedule(garoxaController.detail)
+
+            return handlerInput.responseBuilder
+                .speak(speakOutput)
+                .withShouldEndSession(true)
+                .getResponse();
+        }
+
+        return handlerInput.responseBuilder
+            .speak('予定の登録をキャンセルします')
+            .withShouldEndSession(true)
+            .getResponse();
     }
 };
 
@@ -174,7 +309,10 @@ export const handler = Alexa.SkillBuilders.custom()
     .addRequestHandlers(
         LaunchRequestHandler,
         HelloWorldIntentHandler,
-        OrderIntentHandler,
+        RegisterScheduleIntent,
+        RegisterAllDayScheduleIntent,
+        RegisterRegularScheduleIntent,
+        ConfirmRegisterRegularScheduleIntent,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
