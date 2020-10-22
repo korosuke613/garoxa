@@ -4,7 +4,7 @@ require('dayjs/locale/ja')
 require('dotenv').config();
 
 export interface GaroonScheduleDetail{
-    name: string
+    name?: string
     date: string
     time?: {
         start: string
@@ -82,8 +82,6 @@ export class GaroxaController{
         const startTime = dayjs(startTimeString, {locale: "ja"}).format("YYYY-MM-DDTHH:mm:00.000")
         const endTimeString = `${detail.date} ${detail.time.end}`
         const endTime = dayjs(endTimeString, {locale:"ja"}).format("YYYY-MM-DDTHH:mm:00.000")
-        console.log(startTime)
-        console.log(endTime)
 
         const params = {
             subject: detail.name,
@@ -113,19 +111,69 @@ export class GaroxaController{
         console.log(result)
         return result
     }
+
+    public getCurrentScheduleParams(detail: GaroonScheduleDetail){
+        console.log(detail)
+        const startTimeString = `${detail.date} ${detail.time.start}`
+        const startTime = dayjs(startTimeString, {locale: "ja"}).format("YYYY-MM-DDTHH:mm:00.000+09:00")
+        const endTimeString = `${detail.date} ${detail.time.end}`
+        const endTime = dayjs(endTimeString, {locale:"ja"}).format("YYYY-MM-DDTHH:mm:00.000+09:00")
+
+        const params = {
+            limit: 10,
+            rangeStart: startTime,
+            rangeEnd: endTime
+        }
+        console.log(params)
+        return params
+    }
+
+    public async getCurrentRegularScheduleRowData(detail: GaroonScheduleDetail){
+        const params = this.getCurrentScheduleParams(detail)
+        const result = await this.client.schedule.getEvents(params as any)
+        const regularSchedules = result.events.filter((event)=>{
+            return event.eventType === "REGULAR"
+        })
+
+        console.log(JSON.stringify(regularSchedules, null, 2))
+        return regularSchedules
+    }
+
+    public async getCurrentRegularSchedule(detail: GaroonScheduleDetail){
+        const regularSchedules = await this.getCurrentRegularScheduleRowData(detail)
+        const regularScheduleDescriptions: {
+            startTime: string,
+            endTime: string,
+            subject: string
+        }[] = []
+
+        regularSchedules.forEach((event)=>{
+            const startTime = dayjs(event.start.dateTime).format("HH時mm分")
+            const endTime = dayjs(event.end.dateTime).format("HH時mm分")
+            const subject = event.subject
+
+            regularScheduleDescriptions.push({
+                startTime: startTime,
+                endTime: endTime,
+                subject: subject
+            })
+        })
+
+        console.log(regularScheduleDescriptions)
+        return regularScheduleDescriptions
+    }
 }
 
-// (async ()=>{
-//     const garoxaController = new GaroxaController()
-//     await garoxaController.registerRegularSchedule({
-//         name: "test3",
-//         date: "2020-10-25",
-//         time: {
-//             start: "12:00",
-//             end: "18:00"
-//         }
-//     })
-// })();
+(async ()=>{
+    const garoxaController = new GaroxaController()
+    await garoxaController.getCurrentRegularSchedule({
+        date: "2020-10-24",
+        time: {
+            start: "12:00",
+            end: "18:00"
+        }
+    })
+})();
 //
 // const startDate = dayjs("2020-10-22 22:00").locale("ja")
 // console.log(startDate)
