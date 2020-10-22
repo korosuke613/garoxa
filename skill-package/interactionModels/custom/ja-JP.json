@@ -38,14 +38,6 @@
                             ]
                         },
                         {
-                            "name": "Location",
-                            "type": "AMAZON.City",
-                            "samples": [
-                                "{Location}",
-                                "{Location} です"
-                            ]
-                        },
-                        {
                             "name": "CheckInDate",
                             "type": "AMAZON.DATE",
                             "samples": [
@@ -55,14 +47,11 @@
                         }
                     ],
                     "samples": [
-                        "{Location}",
-                        "{Location} です",
                         "{CheckInDate}",
                         "{CheckInDate} です",
                         "{Name}",
                         "{Name} です",
-                        "{CheckInDate} に {Location} で",
-                        "{CheckInDate} に {Location} で {Name}",
+                        "{CheckInDate} に {Name}",
                         "予定を登録",
                         "予定をいれる"
                     ]
@@ -94,15 +83,6 @@
                             }
                         },
                         {
-                            "name": "Location",
-                            "type": "AMAZON.City",
-                            "confirmationRequired": false,
-                            "elicitationRequired": true,
-                            "prompts": {
-                                "elicitation": "Elicit.Slot.RegisterSchedule.Location"
-                            }
-                        },
-                        {
                             "name": "CheckInDate",
                             "type": "AMAZON.DATE",
                             "confirmationRequired": false,
@@ -118,20 +98,11 @@
         },
         "prompts": [
             {
-                "id": "Elicit.Slot.RegisterSchedule.Location",
-                "variations": [
-                    {
-                        "type": "PlainText",
-                        "value": "どちらの市区町村のホテルをお探しでしょうか"
-                    }
-                ]
-            },
-            {
                 "id": "Elicit.Slot.RegisterSchedule.CheckInDate",
                 "variations": [
                     {
                         "type": "PlainText",
-                        "value": "何月何日のご予約でしょうか？"
+                        "value": "何月何日の予定ですか？"
                     }
                 ]
             },
@@ -149,7 +120,7 @@
                 "variations": [
                     {
                         "type": "PlainText",
-                        "value": "{CheckInDate} {Location} {Name}の予定でよろしいですか？"
+                        "value": "{CheckInDate} {Name}の予定でよろしいですか？"
                     }
                 ]
             }
