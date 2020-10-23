@@ -131,6 +131,25 @@
                     ]
                 },
                 {
+                    "name": "CheckScheduleIntent",
+                    "slots": [
+                        {
+                            "name": "Date",
+                            "type": "AMAZON.DATE",
+                            "samples": [
+                                "{Date}",
+                                "{Date} です"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "{Date} の予定を教えて",
+                        "{Date} の予定を確認",
+                        "予定を確認",
+                        "予定を教えて"
+                    ]
+                },
+                {
                     "name": "ConfirmRegisterRegularScheduleIntent",
                     "samples": []
                 }
@@ -262,6 +281,22 @@
                     "prompts": {
                         "confirmation": "Confirm.Intent.ConfirmRegisterRegularScheduleIntent"
                     }
+                },
+                {
+                    "name": "CheckScheduleIntent",
+                    "delegationStrategy": "ALWAYS",
+                    "confirmationRequired": false,
+                    "slots": [
+                        {
+                            "name": "Date",
+                            "type": "AMAZON.DATE",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.CheckScheduleIntent.Date"
+                            }
+                        }
+                    ]
                 }
             ],
             "delegationStrategy": "ALWAYS"
@@ -354,6 +389,15 @@
                     {
                         "type": "PlainText",
                         "value": "予定を登録しても大丈夫ですか？"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.CheckScheduleIntent.Date",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "何日の予定ですか？"
                     }
                 ]
             }
