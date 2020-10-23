@@ -226,6 +226,52 @@ const ConfirmRegisterRegularScheduleIntent: Alexa.RequestHandler = {
     }
 };
 
+const CheckScheduleIntent: Alexa.RequestHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'CheckScheduleIntent'
+    },
+    async handle(handlerInput) {
+        const dialogState = Alexa.getDialogState(handlerInput.requestEnvelope)
+        const date = Alexa.getSlotValue(handlerInput.requestEnvelope, "Date")
+
+        const detail = {
+            date: date,
+            time: {
+                start: "00:00",
+                end: "23:59"
+            }
+        }
+
+        if (dialogState !== 'COMPLETED') {
+            // ダイアログモデルのスロット質問中の場合
+            return handlerInput.responseBuilder
+                .addDelegateDirective()
+                .getResponse();
+        } else {
+            const currentRegularSchedules = await garoxaController.getCurrentRegularSchedule(detail)
+            const currentAllDaySchedules = await garoxaController.getCurrentAllDaySchedule(detail)
+            const speakFirst = `${date}は、通常予定が${currentRegularSchedules.length}件、期間予定が${currentAllDaySchedules.length}件あります。`
+
+            let speakRegularSchedules: string = ""
+            let speakAllDaySchedules: string = ""
+
+            currentRegularSchedules.forEach((value)=>{
+                const speakSchedule = `${value.startTime}から${value.endTime}まで${value.subject}があります。\n`
+                speakRegularSchedules += speakSchedule
+            })
+            currentAllDaySchedules.forEach((value)=>{
+                const speakSchedule = `${value.subject}があります。\n`
+                speakAllDaySchedules += speakSchedule
+            })
+
+            return handlerInput.responseBuilder
+                .speak(speakFirst + speakRegularSchedules + speakAllDaySchedules)
+                .withShouldEndSession(true)
+                .getResponse();
+        }
+    }
+}
 
 const HelpIntentHandler: Alexa.RequestHandler = {
     canHandle(handlerInput) {
@@ -312,6 +358,7 @@ export const handler = Alexa.SkillBuilders.custom()
         RegisterAllDayScheduleIntent,
         RegisterRegularScheduleIntent,
         ConfirmRegisterRegularScheduleIntent,
+        CheckScheduleIntent,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,

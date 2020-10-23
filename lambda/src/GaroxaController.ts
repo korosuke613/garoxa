@@ -163,6 +163,35 @@ export class GaroxaController{
         console.log(regularScheduleDescriptions)
         return regularScheduleDescriptions
     }
+
+    public async getCurrentAllDayScheduleRowData(detail: GaroonScheduleDetail){
+        const params = this.getCurrentScheduleParams(detail)
+        const result = await this.client.schedule.getEvents(params as any)
+        const regularSchedules = result.events.filter((event)=>{
+            return event.eventType === "ALL_DAY"
+        })
+
+        console.log(JSON.stringify(regularSchedules, null, 2))
+        return regularSchedules
+    }
+
+    public async getCurrentAllDaySchedule(detail: GaroonScheduleDetail){
+        const allDaySchedules = await this.getCurrentAllDayScheduleRowData(detail)
+        const allDayScheduleDescriptions: {
+            subject: string
+        }[] = []
+
+        allDaySchedules.forEach((event)=>{
+            const subject = event.subject
+
+            allDayScheduleDescriptions.push({
+                subject: subject
+            })
+        })
+
+        console.log(allDayScheduleDescriptions)
+        return allDayScheduleDescriptions
+    }
 }
 
 // (async ()=>{
